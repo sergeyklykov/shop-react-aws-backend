@@ -1,5 +1,6 @@
 'use strict';
 
+const { formatResponse } = require('../../helpers');
 const productsMock = require('../../mocks/products.mock');
 
 
@@ -10,17 +11,11 @@ exports.handler = async (event) => {
     const result = productsMock.find(product => product.id === id);
 
     if (!result) {
-        return {
+        return formatResponse({
+            body: { error: 'product not found' },
             statusCode: 404,
-            body: JSON.stringify({ error: 'product not found' }),
-        };
+        });
     }
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(result),
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        },
-    };
+    return formatResponse({ body: result });
 };
