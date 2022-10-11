@@ -12,6 +12,7 @@ provider:
 plugins:
     - serverless-auto-swagger
     - serverless-offline
+    - serverless-webpack
 
 functions:
 

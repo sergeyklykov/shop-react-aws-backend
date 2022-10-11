@@ -1,7 +1,3 @@
-Server is done, Frontend not updated.
-
-Additional scope - swagger.
-
 Endpoints:
 - GET - https://jzx80ojmn4.execute-api.eu-west-1.amazonaws.com/dev/products
 - GET - https://jzx80ojmn4.execute-api.eu-west-1.amazonaws.com/dev/products/{id}
