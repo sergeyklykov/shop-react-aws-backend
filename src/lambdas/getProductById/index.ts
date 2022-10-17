@@ -1,20 +1,26 @@
 import { APIGatewayEvent } from 'aws-lambda';
 import { formatResponse } from '../../helpers';
-import { products } from '../../mocks/products.mock';
+import { getItem } from '../../resolvers';
 
 
 export const handler = async (event: APIGatewayEvent) => {
     const { pathParameters } = event;
-    const { id } = pathParameters ?? {};
+    const id = Number(pathParameters?.id);
 
-    const result = products.find(product => product.id === id);
+    const product = await getItem('products', { id });
+    const stock = await getItem('stock', { id });
 
-    if (!result) {
+    if (!product || !stock) {
         return formatResponse({
             statusCode: 404,
             body: { error: 'product not found' },
         });
     }
 
-    return formatResponse({ body: result });
+    return formatResponse({
+        body: {
+            ...product,
+            ...stock,
+        },
+    });
 };

@@ -1,10 +1,19 @@
 import { APIGatewayEvent } from 'aws-lambda';
 import { formatResponse } from '../../helpers';
-import { products } from '../../mocks/products.mock';
+import { getItems } from '../../resolvers';
+
+
+const getStockById = (stock: any[] = [], id: number) => stock.find(item => item.id === id);
 
 
 export const handler = async (event: APIGatewayEvent) => {
-    const result = [...products];
+    const products = await getItems('products');
+    const stock = await getItems('stock');
 
-    return formatResponse({ body: result });
+    return formatResponse({
+        body: products.map(product => ({
+            ...product,
+            count: getStockById(stock, product.id),
+        })),
+    });
 };
