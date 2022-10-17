@@ -8,6 +8,15 @@ provider:
   name: aws
   runtime: nodejs14.x
   region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource: 'arn:aws:dynamodb:eu-west-1:*:*'
 
 plugins:
   - serverless-auto-swagger
@@ -21,11 +30,7 @@ resources:
       Properties:
         TableName: products
         AttributeDefinitions:
-          - AttributeName: title
-            AttributeType: S
-          - AttributeName: description
-            AttributeType: S
-          - AttributeName: price
+          - AttributeName: id
             AttributeType: N
         KeySchema:
           - AttributeName: id
@@ -38,7 +43,7 @@ resources:
       Properties:
         TableName: stock
         AttributeDefinitions:
-          - AttributeName: count
+          - AttributeName: id
             AttributeType: N
         KeySchema:
           - AttributeName: id
