@@ -14,3 +14,13 @@ export const formatResponse = ({
         'Access-Control-Allow-Origin': '*',
     },
 });
+
+export const getProductDataNotValidError = () => formatResponse({
+    statusCode: 400,
+    body: { error: 'product data is not valid' },
+});
+
+export const getInternalError = () => formatResponse({
+    statusCode: 500,
+    body: { error: 'internal error' },
+});

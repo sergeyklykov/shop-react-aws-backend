@@ -1,5 +1,5 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { formatResponse } from '../../helpers';
+import { formatResponse, getInternalError } from '../../helpers';
 import { getItem } from '../../resolvers';
 
 
@@ -7,20 +7,28 @@ export const handler = async (event: APIGatewayEvent) => {
     const { pathParameters } = event;
     const id = Number(pathParameters?.id);
 
-    const product = await getItem('products', { id });
-    const stock = await getItem('stock', { id });
+    console.log('[Event] getProductById called with ', { id });
 
-    if (!product || !stock) {
+    try {
+        const product = await getItem('products', { id });
+        const stock = await getItem('stock', { id });
+
+        if (!product || !stock) {
+            return formatResponse({
+                statusCode: 404,
+                body: { error: 'product not found' },
+            });
+        }
+
         return formatResponse({
-            statusCode: 404,
-            body: { error: 'product not found' },
+            body: {
+                ...product,
+                ...stock,
+            },
         });
-    }
+    } catch (error) {
+        console.error('[Error] getProductById failed due to ', error);
 
-    return formatResponse({
-        body: {
-            ...product,
-            ...stock,
-        },
-    });
+        return getInternalError();
+    }
 };
