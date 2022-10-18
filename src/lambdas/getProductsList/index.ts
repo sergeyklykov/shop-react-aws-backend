@@ -1,28 +1,18 @@
-import { APIGatewayEvent } from 'aws-lambda';
 import { formatResponse, getInternalError } from '../../helpers';
-import { getItems } from '../../resolvers';
+import { getProductList } from '../../resolvers/product';
 
 
-const getStockById = (stock: any[] = [], id: number) => stock.find(item => item.id === id);
-
-
-export const handler = async (event: APIGatewayEvent) => {
+export const handler = async () => {
     console.log('[Event] getProductList called');
 
     try {
-        const [products, stock] = await Promise.all([
-            getItems('products'),
-            getItems('stock')
-        ]);
+        const products = await getProductList();
 
         return formatResponse({
-            body: products.map(product => ({
-                ...product,
-                count: getStockById(stock, product.id),
-            })),
+            body: products,
         });
     } catch (error) {
-        console.error('[Error] getProductList failed due to ', error);
+        console.error('[Error] getProductList failed due to', error);
 
         return getInternalError();
     }

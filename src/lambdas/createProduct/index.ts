@@ -1,39 +1,39 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { addItem } from '../../resolvers';
+import { createProduct } from '../../resolvers/product';
 import {
     formatResponse,
-    getProductDataNotValidError,
+    generateProductId,
     getInternalError,
+    getProductDataNotValidError,
+    isProduct,
+    parseBodyToJson,
 } from '../../helpers';
 
 
 export const handler = async (event: APIGatewayEvent) => {
+    console.log('[Event] createProduct called with ', event.body);
+
     if (!event.body) {
         return getProductDataNotValidError();
     }
 
-    const { title, description, price, count } = Object.fromEntries(
-        decodeURIComponent(event.body)
-            .split('&')
-            .map(item => item.split('='))
-    );
+    try {
+        const id = generateProductId();
+        const props = parseBodyToJson(event.body);
+        const product = { id, ...props };
 
-    const id = Math.floor(Math.random() * 1000);
+        if (!isProduct(product)) {
+            getProductDataNotValidError();
+        }
 
-    const product = { id, title, description, price };
-    const stock = { id, count };
+        const result = await createProduct(product);
 
-    if (!title || !description || !price || !count) {
-        return getProductDataNotValidError();
-    }
-
-    return Promise.resolve()
-        .then(() => addItem('products', product))
-        .then(() => addItem('stock', stock))
-        .then(() => formatResponse({ body: { id } }))
-        .catch((error) => {
-            console.error('[Error] createProduct failed due to ', error);
-
-            return getInternalError();
+        return formatResponse({
+            body: result,
         });
+    } catch (error) {
+        console.error('[Error] createProduct', error);
+
+        return getInternalError();
+    }
 };

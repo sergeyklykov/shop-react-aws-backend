@@ -1,31 +1,28 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { formatResponse, getInternalError } from '../../helpers';
-import { getItem } from '../../resolvers';
+import { formatResponse, getInternalError, getProductDataNotValidError } from '../../helpers';
+import { getProductById } from '../../resolvers/product';
 
 
 export const handler = async (event: APIGatewayEvent) => {
-    const { pathParameters } = event;
-    const id = Number(pathParameters?.id);
+    const id = String(event.pathParameters?.id);
 
     console.log('[Event] getProductById called with ', { id });
 
-    try {
-        const product = await getItem('products', { id });
-        const stock = await getItem('stock', { id });
+    if (!id) {
+        return getProductDataNotValidError();
+    }
 
-        if (!product || !stock) {
+    try {
+        const product = await getProductById(id);
+
+        if (!product) {
             return formatResponse({
                 statusCode: 404,
                 body: { error: 'product not found' },
             });
         }
 
-        return formatResponse({
-            body: {
-                ...product,
-                ...stock,
-            },
-        });
+        return formatResponse({ body: product });
     } catch (error) {
         console.error('[Error] getProductById failed due to ', error);
 
