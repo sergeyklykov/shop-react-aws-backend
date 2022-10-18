@@ -10,13 +10,12 @@ jest.mock('../../resolvers/product');
 describe('createProduct', () => {
     describe('on call with valid data', () => {
         it('should return 200', async () => {
-            const [expectedProduct] = products;
-            const { id } = expectedProduct!;
+            const [product] = products;
+            const { id, ...body } = product!;
+            const event = { body: JSON.stringify(body) } as APIGatewayEvent;
 
             (createProduct as jest.MockedFn<typeof createProduct>).mockResolvedValue(id);
 
-            const validBody = 'title=ttl&description=desc&price=1&count=5';
-            const event = { body: validBody } as unknown as APIGatewayEvent;
             const result = await handler(event);
             const expectedResult = formatResponse({ body: id });
 
@@ -26,7 +25,9 @@ describe('createProduct', () => {
 
     describe('on call with invalid data', () => {
         it('should return "product data not valid" error', async () => {
-            const event = { body: null } as unknown as APIGatewayEvent;
+            const event = { body: null } as APIGatewayEvent;
+
+            (createProduct as jest.MockedFn<typeof createProduct>).mockRejectedValue(null);
 
             const result = await handler(event);
             const expectedResult = getProductDataNotValidError();
@@ -37,8 +38,9 @@ describe('createProduct', () => {
 
     describe('on internal error', () => {
         it('should return "internal error" error', async () => {
-            const validBody = 'title=ttl&description=desc&price=1&count=5';
-            const event = { body: validBody } as unknown as APIGatewayEvent;
+            const [product] = products;
+            const { id, ...body } = product!;
+            const event = { body: JSON.stringify(body) } as APIGatewayEvent;
 
             (createProduct as jest.MockedFn<typeof createProduct>).mockRejectedValue(null);
 

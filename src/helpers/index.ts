@@ -29,12 +29,12 @@ export const getInternalError = () => formatResponse({
     body: { error: 'internal error' },
 });
 
-export const parseBodyToJson = (body: string): { [k: string]: unknown } => {
-    const pairs = decodeURIComponent(body)
-        .split('&')
-        .map(item => item.split('='));
-
-    return Object.fromEntries(pairs);
+export const parseBodyToJson = (body: string): { [k: string]: unknown } | null => {
+    try {
+        return JSON.parse(body);
+    } catch (error) {
+        return null;
+    }
 };
 
 export const generateProductId = () => {
@@ -44,10 +44,12 @@ export const generateProductId = () => {
 export const isProduct = (data: any): data is Product => {
     return (
         (typeof data === 'object') &&
-        ('id' in data) &&
-        ('title' in data) &&
-        ('description' in data) &&
-        ('price' in data) &&
-        ('count' in data)
+        [
+            'id',
+            'title',
+            'description',
+            'price',
+            'count'
+        ].every(prop => prop in data)
     );
 };
