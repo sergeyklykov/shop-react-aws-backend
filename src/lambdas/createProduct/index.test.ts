@@ -1,5 +1,5 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { formatResponse, getInternalError, getProductDataNotValidError } from '../../helpers';
+import { getDefaultResponse, getInternalError, getProductDataNotValidError } from '../../helpers';
 import { products } from '../../mocks/products.mock';
 import { createProduct } from '../../resolvers/product';
 import { handler } from './index';
@@ -17,7 +17,7 @@ describe('createProduct', () => {
             (createProduct as jest.MockedFn<typeof createProduct>).mockResolvedValue(id);
 
             const result = await handler(event);
-            const expectedResult = formatResponse({ body: id });
+            const expectedResult = getDefaultResponse(id);
 
             expect(result).toEqual(expectedResult);
         });

@@ -1,4 +1,4 @@
-import { formatResponse, getInternalError } from '../../helpers';
+import { getDefaultResponse, getInternalError } from '../../helpers';
 import { getProductList } from '../../resolvers/product';
 
 
@@ -8,12 +8,8 @@ export const handler = async () => {
     try {
         const products = await getProductList();
 
-        return formatResponse({
-            body: products,
-        });
+        return getDefaultResponse(products);
     } catch (error) {
-        console.error('[Error] getProductList failed due to', error);
-
         return getInternalError();
     }
 };

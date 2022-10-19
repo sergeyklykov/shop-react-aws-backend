@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "sls offline start",
     "deploy": "sls deploy",
-    "test": "jest",
+    "test": "jest --silent",
     "tools:mock:db": "node ./scripts/mock-db.js"
   },
   "devDependencies": {

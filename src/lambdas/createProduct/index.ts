@@ -1,11 +1,10 @@
 import { APIGatewayEvent } from 'aws-lambda';
 import { createProduct } from '../../resolvers/product';
+import { isProduct, generateProductId } from '../../helpers/product';
 import {
-    formatResponse,
-    generateProductId,
+    getDefaultResponse,
     getInternalError,
     getProductDataNotValidError,
-    isProduct,
     parseBodyToJson,
 } from '../../helpers';
 
@@ -28,12 +27,8 @@ export const handler = async (event: APIGatewayEvent) => {
 
         const result = await createProduct(product);
 
-        return formatResponse({
-            body: result,
-        });
+        return getDefaultResponse(result);
     } catch (error) {
-        console.error('[Error] createProduct', error);
-
         return getInternalError();
     }
 };

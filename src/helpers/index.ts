@@ -1,12 +1,4 @@
-import { randomBytes } from 'crypto';
-import { Product } from '../types/api-types';
-
-
-export const formatResponse = ({
-    body,
-    statusCode = 200,
-    headers = {},
-}: {
+const formatResponse = ({ body, statusCode = 200, headers = {} }: {
     body: any,
     statusCode?: number,
     headers?: { [k: string]: string },
@@ -14,10 +6,12 @@ export const formatResponse = ({
     statusCode,
     body: JSON.stringify(body),
     headers: {
-        ...headers,
         'Access-Control-Allow-Origin': '*',
+        ...headers,
     },
 });
+
+export const getDefaultResponse = (body: any) => formatResponse({ body });
 
 export const getProductDataNotValidError = () => formatResponse({
     statusCode: 400,
@@ -29,27 +23,15 @@ export const getInternalError = () => formatResponse({
     body: { error: 'internal error' },
 });
 
-export const parseBodyToJson = (body: string): { [k: string]: unknown } | null => {
+export const getProductNotFoundError = () => formatResponse({
+    statusCode: 404,
+    body: { error: 'product not found' },
+});
+
+export const parseBodyToJson = (body: string): { [k: string]: any } | null => {
     try {
         return JSON.parse(body);
     } catch (error) {
         return null;
     }
-};
-
-export const generateProductId = () => {
-    return randomBytes(16).toString('hex');
-};
-
-export const isProduct = (data: any): data is Product => {
-    return (
-        (typeof data === 'object') &&
-        [
-            'id',
-            'title',
-            'description',
-            'price',
-            'count'
-        ].every(prop => prop in data)
-    );
 };

@@ -1,4 +1,4 @@
-import { formatResponse } from '../../helpers';
+import { getDefaultResponse } from '../../helpers';
 import { products } from '../../mocks/products.mock';
 import { getProductList } from '../../resolvers/product';
 import { handler } from './index';
@@ -12,7 +12,7 @@ describe('getProductsList', () => {
             (getProductList as jest.MockedFn<typeof getProductList>).mockResolvedValue(products);
 
             const result = await handler();
-            const expectedResult = formatResponse({ body: products });
+            const expectedResult = getDefaultResponse(products);
 
             expect(result).toEqual(expectedResult);
         });

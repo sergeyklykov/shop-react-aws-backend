@@ -1,5 +1,5 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { formatResponse } from '../../helpers';
+import { getDefaultResponse, getProductNotFoundError } from '../../helpers';
 import { products } from '../../mocks/products.mock';
 import { getProductById } from '../../resolvers/product';
 import { handler } from './index';
@@ -17,7 +17,7 @@ describe('getProductById', () => {
 
             const event = { pathParameters: { id } } as unknown as APIGatewayEvent;
             const result = await handler(event);
-            const expectedResult = formatResponse({ body: expectedProduct });
+            const expectedResult = getDefaultResponse(expectedProduct);
 
             expect(result).toEqual(expectedResult);
         });
@@ -30,7 +30,7 @@ describe('getProductById', () => {
             (getProductById as jest.MockedFn<typeof getProductById>).mockResolvedValue(null);
 
             const result = await handler(event);
-            const expectedResult = formatResponse({ body: { error: 'product not found' }, statusCode: 404 });
+            const expectedResult = getProductNotFoundError();
 
             expect(result).toEqual(expectedResult);
         });
