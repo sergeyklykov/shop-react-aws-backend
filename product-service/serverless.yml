@@ -23,6 +23,10 @@ plugins:
   - serverless-offline
   - serverless-webpack
 
+custom:
+  webpack:
+    webpackConfig: "../webpack.config.js"
+
 resources:
   Resources:
     products:
@@ -54,14 +58,14 @@ resources:
 
 functions:
   getProductList:
-    handler: src/lambdas/getProductsList/index.handler
+    handler: ../src/lambdas/getProductsList/index.handler
     events:
       - http:
           method: GET
           path: /products
           cors: true
   getProductById:
-    handler: src/lambdas/getProductById/index.handler
+    handler: ../src/lambdas/getProductById/index.handler
     events:
       - http:
           method: GET
@@ -72,7 +76,7 @@ functions:
               paths:
                 id: true
   createProduct:
-    handler: src/lambdas/createProduct/index.handler
+    handler: ../src/lambdas/createProduct/index.handler
     events:
       - http:
           method: POST
