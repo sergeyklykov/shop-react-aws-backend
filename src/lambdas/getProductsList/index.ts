@@ -1,10 +1,15 @@
-import { APIGatewayEvent } from 'aws-lambda';
-import { formatResponse } from '../../helpers';
-import { products } from '../../mocks/products.mock';
+import { getDefaultResponse, getInternalError } from '../../helpers';
+import { getProductList } from '../../resolvers/product';
 
 
-export const handler = async (event: APIGatewayEvent) => {
-    const result = [...products];
+export const handler = async () => {
+    console.log('[Event] getProductList called');
 
-    return formatResponse({ body: result });
+    try {
+        const products = await getProductList();
+
+        return getDefaultResponse(products);
+    } catch (error) {
+        return getInternalError();
+    }
 };

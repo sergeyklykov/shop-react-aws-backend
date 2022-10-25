@@ -5,33 +5,76 @@ frameworkVersion: "3"
 useDotenv: true
 
 provider:
-    name: aws
-    runtime: nodejs14.x
-    region: eu-west-1
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+          Resource: 'arn:aws:dynamodb:eu-west-1:*:*'
 
 plugins:
-    - serverless-auto-swagger
-    - serverless-offline
-    - serverless-webpack
+  - serverless-auto-swagger
+  - serverless-offline
+  - serverless-webpack
+
+resources:
+  Resources:
+    products:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: products
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    stock:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: stock
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 functions:
-
-    getProductList:
-        handler: src/lambdas/getProductsList/index.handler
-        events:
-            - http:
-                method: GET
-                path: /products
-                cors: true
-
-    getProductById:
-        handler: src/lambdas/getProductById/index.handler
-        events:
-            - http:
-                method: GET
-                path: /products/{id}
-                cors: true
-                request:
-                    parameters:
-                        paths:
-                            id: true
+  getProductList:
+    handler: src/lambdas/getProductsList/index.handler
+    events:
+      - http:
+          method: GET
+          path: /products
+          cors: true
+  getProductById:
+    handler: src/lambdas/getProductById/index.handler
+    events:
+      - http:
+          method: GET
+          path: /products/{id}
+          cors: true
+          request:
+            parameters:
+              paths:
+                id: true
+  createProduct:
+    handler: src/lambdas/createProduct/index.handler
+    events:
+      - http:
+          method: POST
+          path: /products
+          cors: true
