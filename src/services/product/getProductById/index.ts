@@ -1,11 +1,11 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { getProductById } from '../../resolvers/product';
+import { getProductById } from '../../../shared/resolvers/product';
 import {
     getDefaultResponse,
     getInternalError,
     getProductDataNotValidError,
     getProductNotFoundError,
-} from '../../helpers';
+} from '../../../shared/helpers';
 
 
 export const handler = async (event: APIGatewayEvent) => {

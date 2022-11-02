@@ -5,13 +5,14 @@
   "repository": "git@github.com:sergeyklykov/shop-react-aws-backend.git",
   "license": "MIT",
   "dependencies": {
+    "csv-parser": "^3.0.0",
     "serverless": "^3.22.0",
     "serverless-auto-swagger": "^2.9.2",
     "serverless-offline": "^11.1.1"
   },
   "scripts": {
-    "dev:product-service": "serverless product-service:offline",
-    "dev:import-service": "serverless import-service:offline",
+    "dev:service:products": "serverless product-service:offline",
+    "dev:service:import": "serverless import-service:offline",
     "deploy": "sls deploy",
     "test": "jest --silent",
     "tools:mock:db": "node ./scripts/mock-db.js"
@@ -26,6 +27,7 @@
     "@types/aws-lambda": "^8.10.106",
     "@types/jest": "^29.1.2",
     "@types/node": "^18.8.4",
+    "@types/readable-stream": "^2.3.14",
     "jest": "^29.1.2",
     "serverless-webpack": "^5.10.0",
     "ts-jest": "^29.0.3",
