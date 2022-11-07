@@ -1,10 +1,10 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { getDefaultResponse, getProductNotFoundError } from '../../helpers';
-import { products } from '../../mocks/products.mock';
-import { getProductById } from '../../resolvers/product';
+import { getDefaultResponse, getProductNotFoundError } from '../../../shared/helpers';
+import { products } from '../../../mocks/products.mock';
+import { getProductById } from '../../../shared/resolvers/product';
 import { handler } from './index';
 
-jest.mock('../../resolvers/product');
+jest.mock('../../../shared/resolvers/product');
 
 
 describe('getProductById', () => {

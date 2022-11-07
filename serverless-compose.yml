@@ -1,0 +1,7 @@
+services:
+
+  product-service:
+    path: src/services/product/
+
+  import-service:
+    path: src/services/import/

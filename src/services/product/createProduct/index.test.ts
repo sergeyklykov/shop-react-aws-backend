@@ -1,10 +1,10 @@
 import { APIGatewayEvent } from 'aws-lambda';
-import { getDefaultResponse, getInternalError, getProductDataNotValidError } from '../../helpers';
-import { products } from '../../mocks/products.mock';
-import { createProduct } from '../../resolvers/product';
+import { getDefaultResponse, getInternalError, getProductDataNotValidError } from '../../../shared/helpers';
+import { products } from '../../../mocks/products.mock';
+import { createProduct } from '../../../shared/resolvers/product';
 import { handler } from './index';
 
-jest.mock('../../resolvers/product');
+jest.mock('../../../shared/resolvers/product');
 
 
 describe('createProduct', () => {

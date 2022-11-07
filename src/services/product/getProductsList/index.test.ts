@@ -1,9 +1,9 @@
-import { getDefaultResponse } from '../../helpers';
-import { products } from '../../mocks/products.mock';
-import { getProductList } from '../../resolvers/product';
+import { getDefaultResponse } from '../../../shared/helpers';
+import { products } from '../../../mocks/products.mock';
+import { getProductList } from '../../../shared/resolvers/product';
 import { handler } from './index';
 
-jest.mock('../../resolvers/product');
+jest.mock('../../../shared/resolvers/product');
 
 
 describe('getProductsList', () => {

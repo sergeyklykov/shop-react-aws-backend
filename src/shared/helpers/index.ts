@@ -1,3 +1,7 @@
+import csv from 'csv-parser';
+import { Readable } from 'stream';
+
+
 const formatResponse = ({ body, statusCode = 200, headers = {} }: {
     body: any,
     statusCode?: number,
@@ -35,3 +39,13 @@ export const parseBodyToJson = (body: string): { [k: string]: any } | null => {
         return null;
     }
 };
+
+export const parseCsvStream = <T>(stream: T) => new Promise((resolve, reject) => {
+    const results: any[] = [];
+
+    (stream as Readable)
+        .pipe(csv())
+        .on('data', (data: any) => results.push(data))
+        .on('end', () => resolve(results))
+        .on('error', (error: Error) => reject(error));
+});

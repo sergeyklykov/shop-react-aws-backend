@@ -1,5 +1,5 @@
-import { getDefaultResponse, getInternalError } from '../../helpers';
-import { getProductList } from '../../resolvers/product';
+import { getDefaultResponse, getInternalError } from '../../../shared/helpers';
+import { getProductList } from '../../../shared/resolvers/product';
 
 
 export const handler = async () => {

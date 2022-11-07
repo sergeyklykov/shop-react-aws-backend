@@ -1,0 +1,50 @@
+service: import-service
+
+frameworkVersion: "3"
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: eu-west-1
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource: arn:aws:s3:::aws-shop-be-import-service-uploads
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: arn:aws:s3:::aws-shop-be-import-service-uploads/*
+
+plugins:
+  - serverless-auto-swagger
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: "../../../webpack.config.js"
+
+functions:
+  importProductsFile:
+    handler: index.importProductsFile
+    events:
+      - http:
+          method: GET
+          path: /import
+          cors: true
+
+  importFileParser:
+    handler: index.importFileParser
+    events:
+      - s3:
+          bucket: aws-shop-be-import-service-uploads
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploads/
+          existing: true

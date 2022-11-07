@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
-import { Product } from '../types/api-types';
+import { Product } from '../../types/api-types';
 
 
 export const generateProductId = () => {

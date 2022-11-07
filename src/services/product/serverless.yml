@@ -16,12 +16,16 @@ provider:
             - dynamodb:Scan
             - dynamodb:GetItem
             - dynamodb:PutItem
-          Resource: 'arn:aws:dynamodb:eu-west-1:*:*'
+          Resource: "arn:aws:dynamodb:eu-west-1:*:*"
 
 plugins:
   - serverless-auto-swagger
   - serverless-offline
   - serverless-webpack
+
+custom:
+  webpack:
+    webpackConfig: "../../../webpack.config.js"
 
 resources:
   Resources:
@@ -54,14 +58,14 @@ resources:
 
 functions:
   getProductList:
-    handler: src/lambdas/getProductsList/index.handler
+    handler: index.getProductsList # ../src/lambdas/getProductsList/index.handler
     events:
       - http:
           method: GET
           path: /products
           cors: true
   getProductById:
-    handler: src/lambdas/getProductById/index.handler
+    handler: index.getProductById # ../src/lambdas/getProductById/index.handler
     events:
       - http:
           method: GET
@@ -72,7 +76,7 @@ functions:
               paths:
                 id: true
   createProduct:
-    handler: src/lambdas/createProduct/index.handler
+    handler: index.createProduct # ../src/lambdas/createProduct/index.handler
     events:
       - http:
           method: POST
