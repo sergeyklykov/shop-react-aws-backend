@@ -5,3 +5,5 @@ services:
 
   import-service:
     path: src/services/import/
+    params:
+      queueUrl: ${product-service.queueUrl}

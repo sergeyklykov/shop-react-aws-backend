@@ -20,6 +20,13 @@ provider:
           Action:
             - s3:*
           Resource: arn:aws:s3:::aws-shop-be-import-service-uploads/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource: "*"
+
+  environment:
+    PRODUCTS_QUEUE_URL: ${param:queueUrl}
 
 plugins:
   - serverless-auto-swagger
