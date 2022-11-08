@@ -69,12 +69,25 @@ resources:
       Properties:
         TopicName: createProductTopic
 
-    createProductSubscribtion:
+    productsImportSucceed:
       Type: AWS::SNS::Subscription
       Properties:
         Protocol: "email"
-        Endpoint: "test@example.com"
+        Endpoint: "success@example.com"
         TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy:
+          import:
+            - success
+
+    productsImportFailed:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: "email"
+        Endpoint: "fail@example.com"
+        TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy:
+          import:
+            - fail
 
   Outputs:
     queueUrl:

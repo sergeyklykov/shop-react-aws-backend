@@ -1,13 +1,23 @@
 import { SQSHandler } from 'aws-lambda';
 import { generateProductId } from '../../../shared/helpers/product';
-import { publish } from '../../../shared/resolvers/notifications';
+import { publish, setAttribute } from '../../../shared/resolvers/notifications';
 import { createProduct } from '../../../shared/resolvers/product';
 
 
 const TOPIC = String(process.env.PRODUCTS_NOTIFICATION_TOPIC);
 
 const publishToProductsTopic = publish(TOPIC);
+const setAttributeToProductsTopic = setAttribute(TOPIC);
 
+const publishSuccess = async (message: string) => {
+    await setAttributeToProductsTopic('import', 'success');
+    await publishToProductsTopic(message);
+}
+
+const publishFail = async (message: string) => {
+    await setAttributeToProductsTopic('import', 'fail');
+    await publishToProductsTopic(message);
+};
 
 export const handler: SQSHandler = async (event) => {
     try {
@@ -25,8 +35,9 @@ export const handler: SQSHandler = async (event) => {
         });
 
         await Promise.all(promises);
-        await publishToProductsTopic('products imported');
+        await publishSuccess('products imported');
     } catch (error) {
         console.log('Whoops', error);
+        await publishFail('products not imported');
     }
 };
