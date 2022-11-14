@@ -17,6 +17,8 @@ provider:
             - dynamodb:GetItem
             - dynamodb:PutItem
           Resource: "arn:aws:dynamodb:eu-west-1:*:*"
+  environment:
+    PRODUCTS_NOTIFICATION_TOPIC: { "Ref": "createProductTopic" }
 
 plugins:
   - serverless-auto-swagger
@@ -42,6 +44,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
     stock:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -55,6 +58,40 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    catalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+
+    createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+
+    productsImportSucceed:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: "email"
+        Endpoint: "success@example.com"
+        TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy:
+          import:
+            - success
+
+    productsImportFailed:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: "email"
+        Endpoint: "fail@example.com"
+        TopicArn: { "Ref": "createProductTopic" }
+        FilterPolicy:
+          import:
+            - fail
+
+  Outputs:
+    queueUrl:
+      Value: { "Ref": "catalogItemsQueue" }
 
 functions:
   getProductList:
@@ -82,3 +119,12 @@ functions:
           method: POST
           path: /products
           cors: true
+  catalogBatchProcess:
+    handler: index.catalogBatchProcess
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
+          batchSize: 5
