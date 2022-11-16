@@ -12,14 +12,21 @@ export const handler = async (event: any) => {
     const credentials = decode(token).split(':');
     const [username, password] = credentials;
 
-    const isAuthorized = username === USERNAME && password === PASSWORD;
-    const statusCode = isAuthorized ? 200 : 401;
+    let isAuthorized = false;
+    let statusCode = 401;
+
+    if (!username || !password) {
+        return {
+            isAuthorized,
+            statusCode,
+        };
+    }
+
+    isAuthorized = username === USERNAME && password === PASSWORD;
+    statusCode = isAuthorized ? 200 : 403;
 
     return {
         isAuthorized,
         statusCode,
-        headers: {
-            'WWW-Authenticate': 'Basic',
-        },
     };
 };
