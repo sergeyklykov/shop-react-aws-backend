@@ -1,5 +1,8 @@
 services:
 
+  authorization-service:
+    path: src/services/authorization/
+
   product-service:
     path: src/services/product/
 

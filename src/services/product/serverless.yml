@@ -17,6 +17,11 @@ provider:
             - dynamodb:GetItem
             - dynamodb:PutItem
           Resource: "arn:aws:dynamodb:eu-west-1:*:*"
+        - Effect: Allow
+          Action:
+            - sns:Publish
+            - sns:SetTopicAttributes
+          Resource: "*"
   environment:
     PRODUCTS_NOTIFICATION_TOPIC: { "Ref": "createProductTopic" }
 

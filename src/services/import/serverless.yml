@@ -9,6 +9,14 @@ provider:
   runtime: nodejs14.x
   region: eu-west-1
 
+  httpApi:
+    cors: true
+    authorizers:
+      basicAuthorizer:
+        type: request
+        functionArn: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:basicAuthorizer
+        enableSimpleResponses: true
+
   iam:
     role:
       statements:
@@ -24,11 +32,16 @@ provider:
           Action:
             - sqs:SendMessage
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:basicAuthorizer
 
   environment:
     PRODUCTS_QUEUE_URL: ${param:queueUrl}
 
 plugins:
+  - serverless-pseudo-parameters
   - serverless-auto-swagger
   - serverless-offline
   - serverless-webpack
@@ -41,10 +54,12 @@ functions:
   importProductsFile:
     handler: index.importProductsFile
     events:
-      - http:
+      - httpApi:
           method: GET
           path: /import
-          cors: true
+          authorizer:
+            name: basicAuthorizer
+            type: request
 
   importFileParser:
     handler: index.importFileParser
